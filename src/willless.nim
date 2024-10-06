@@ -1,4 +1,4 @@
-import willless/[core, utils], illwill
+import willless/[core], illwill
 
 type ViewComponent* = ref object of WilllessComponent
   child*: InlineComponent

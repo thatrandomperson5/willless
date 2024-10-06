@@ -15,7 +15,7 @@ type
 
   SpaceComponent* = ref object of InlineComponent
     width*, height*: int
-    fill* = ' '
+    ch* = ' '
 
   ExpansionStyle* {.pure.} = enum X, Y, XY, None
   FlexibleComponent* = ref object of InlineComponent

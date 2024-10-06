@@ -1,4 +1,4 @@
-import utils
+
 
 # Base methods
 
@@ -23,10 +23,10 @@ method fill*(c: InlineComponent, x1, y1, x2, y2: int, ch = ' ') {.base.} =
 
 # Space
 
-proc initSpaceComponent*(s: SpaceComponent, width, height: int, fill = ' ') =
+proc initSpaceComponent*(s: SpaceComponent, width, height: int, ch = ' ') =
   s.width = width
   s.height = height
-  s.fill = fill
+  s.ch = ch
 
 proc newSpace*(width, height: int, fill = ' '): SpaceComponent =
   new(result)
@@ -37,4 +37,4 @@ proc newEmpty*(): SpaceComponent {.inline.} = newSpace(0, 0)
 
 method render*(s: SpaceComponent) =
   if s.height > 0 and s.width > 0:
-    s.fill(0, 0, s.height-1, s.width-1, s.fill) # fill 
+    s.fill(0, 0, s.height-1, s.width-1, s.ch) # fill 
