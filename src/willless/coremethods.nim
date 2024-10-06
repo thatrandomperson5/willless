@@ -38,3 +38,23 @@ proc newEmpty*(): SpaceComponent {.inline.} = newSpace(0, 0)
 method render*(s: SpaceComponent) =
   if s.height > 0 and s.width > 0:
     s.fill(0, 0, s.height-1, s.width-1, s.ch) # fill 
+
+
+# FlexibleComponent
+
+proc initExpandingComponent*(f: ExpandingComponent, expansion=ExpansionStyle.XY,
+  minWidth, minHeight, maxWidth, maxHeight = 0) =
+    f.expansion = expansion
+    f.minWidth = minWidth
+    f.minHeight = minHeight
+    f.maxWidth = maxWidth
+    f.maxHeight = maxHeight
+
+    if f.maxWidth == 0: f.maxWidth = high(int) # infinity
+    if f.maxHeight == 0: f.maxHeight = high(int) # infintiy
+
+
+method render*(f: ExpandingComponent) =
+  doAssert f.subbuff.height <= f.maxHeight and f.subbuff.height >= f.minHeight
+  doAssert f.subbuff.width <= f.maxWidth and f.subbuff.width >= f.minWidth 
+  # Actual handling would be done by the parent when creating the subbuffer

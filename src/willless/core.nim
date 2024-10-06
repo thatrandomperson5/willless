@@ -18,7 +18,7 @@ type
     ch* = ' '
 
   ExpansionStyle* {.pure.} = enum X, Y, XY, None
-  FlexibleComponent* = ref object of InlineComponent
+  ExpandingComponent* = ref object of InlineComponent
     minHeight*, minWidth*, maxWidth*, maxHeight*: int
     expansion* = ExpansionStyle.XY
 

@@ -26,7 +26,7 @@ proc findKind(n: NimNode, k: NimNodeKind): (NimNode, bool) =
 
 
 
-macro super*(t: typed) =
+macro super*(t: typed): untyped =
   t.expectKind(nnkSym)
   var impl = getTypeImpl(t)
   if impl.kind == nnkRefTy:
@@ -34,4 +34,4 @@ macro super*(t: typed) =
   let parent = findKind(impl, nnkOfInherit)[0][0]
   
   result = newCall(parent, t)
-  echo result.repr
+  # echo result.repr

@@ -6,7 +6,17 @@ type
     text*: string
     wrap* = WrapStyle.Hard
 
+  ExpandingText* = ref object of ExpandingComponent
+    text*: string
+    wrap* = WrapStyle.Hard
+    
+
 proc initTextComponent*(t: TextComponent, text: string, wrap = WrapStyle.Hard) =
+  t.text = text
+  t.wrap = wrap
+
+proc initExpandingText*(t: ExpandingText, text: string, wrap = WrapStyle.Hard) =
+  t.initExpandingComponent()
   t.text = text
   t.wrap = wrap
 
@@ -15,7 +25,12 @@ proc newText*(text: string, wrap = WrapStyle.Hard): TextComponent =
   result.initTextComponent(text, wrap)
 
 
-method render*(t: TextComponent) =
+proc newExpandingText*(text: string, wrap = WrapStyle.Hard): ExpandingText =
+  new(result)
+  result.initExpandingText(text, wrap)
+
+
+template textRender(): untyped =
   let buff = t.subbuff # Will be set by parent
 
   var wrapped = t.text
@@ -28,3 +43,10 @@ method render*(t: TextComponent) =
     discard
 
   t.write(wrapped)
+
+method render*(t: TextComponent) =
+  textRender()
+
+method render*(t: ExpandingText) =
+  render(super(t))
+  textRender()
