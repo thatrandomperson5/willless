@@ -1,0 +1,11 @@
+nimcache/
+nimblecache/
+htmldocs/
+
+# Binary
+*
+!/**/
+!*.*
+*.bin
+**/*.log
+*.exe
