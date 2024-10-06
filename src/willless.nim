@@ -16,7 +16,7 @@ proc newView*(tb: TerminalBuffer): ViewComponent =
 
 method addChild*(v: ViewComponent, child: InlineComponent) =
   child.parent = v
-  child.subbuff = newSubBuffer([0, 0, v.subbuff.highX, v.subbuff.highY], v.subbuff) # Inital buffer
+  # child.subbuff = newSubBuffer([0, 0, v.subbuff.highX, v.subbuff.highY], v.subbuff) # Inital buffer
   v.child = child
 
 method render*(v: ViewComponent) =

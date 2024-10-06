@@ -54,7 +54,14 @@ proc initExpandingComponent*(f: ExpandingComponent, expansion=ExpansionStyle.XY,
     if f.maxHeight == 0: f.maxHeight = high(int) # infintiy
 
 
+method addChild(f: ExpandingComponent, child: InlineComponent) =
+  child.parent = f
+  f.child = child
+
 method render*(f: ExpandingComponent) =
   doAssert f.subbuff.height <= f.maxHeight and f.subbuff.height >= f.minHeight
   doAssert f.subbuff.width <= f.maxWidth and f.subbuff.width >= f.minWidth 
-  # Actual handling would be done by the parent when creating the subbuffer
+  
+  f.child.subbuff = f.subbuff # This type is only a denotation of a more advanced sizing protocol
+  f.child.render()
+  
