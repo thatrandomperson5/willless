@@ -20,6 +20,8 @@ method fill*(c: InlineComponent, x1, y1, x2, y2: int, ch = ' ') {.base.} =
   f.add ch
   c.subbuff.fill(x1, y1, x2, y2, f, c.overflow)
 
+method preSize*(c: InlineComponent) {.base.} = discard
+
 
 # Space
 
