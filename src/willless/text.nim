@@ -1,5 +1,5 @@
 import core, utils
-import std/[wordwrap, sequtils, strutils]
+import std/[wordwrap, strutils]
 
 type 
   TextComponent* = ref object of InlineComponent
@@ -39,17 +39,17 @@ method render*(t: TextComponent) =
   
   t.lineCache.setLen(0)
 
-method initalSizeCalc*(t: TextComponent): Constraint =
-  if t.wrap != WrapStyle.None: 
-    return Constraint.Width
 
-  textRender(t)
-  t.height = t.lineCache.len
-  t.width = maxIndex(t.lineCache.map(proc (s: string): int = s.len))
-  return Constraint.None
 
-method restrictedSizeCalc*(t: TextComponent, ct: ConstraintTable): bool =
-  t.width = ct[Width]
-  textRender(t)
-  t.height = t.lineCache.len
-  return true
+
+
+
+
+
+
+
+
+
+
+
+

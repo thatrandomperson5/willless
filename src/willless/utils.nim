@@ -1,4 +1,4 @@
-import std/[macros, tables]
+import std/[macros]
 
 
 proc hardWrap*(s: string, length: int): string =
@@ -35,12 +35,3 @@ macro super*(t: typed): untyped =
   
   result = newCall(parent, t)
   # echo result.repr
-
-
-# Constraints
-type 
-  Constraint* {.pure.} = enum Width, Height, None
-  ConstraintTable* = TableRef[Constraint, int]
-
-
-export tables

@@ -1,4 +1,4 @@
-import utils
+
 
 # Base methods
 
@@ -20,9 +20,6 @@ method fill*(c: InlineComponent, x1, y1, x2, y2: int, ch = ' ') {.base.} =
   f.add ch
   c.subbuff.fill(x1, y1, x2, y2, f, c.overflow)
 
-method initalSizeCalc*(c: InlineComponent): Constraint {.base.} = Constraint.None
-
-method restrictedSizeCalc*(c: InlineComponent, ct: ConstraintTable): bool {.base.} = true
 
 # method addChild*(c: InlineComponent, child: InlineComponent) {.base.} = discard
 
