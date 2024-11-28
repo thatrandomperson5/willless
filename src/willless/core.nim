@@ -33,9 +33,19 @@ type
 
 proc newSubBuffer*(boundingBox: array[4, int], parent: WilllessSubbuffer): WilllessSubbuffer =
   result = WilllessSubbuffer(boundingBox: boundingBox, parent: parent)
-  result.height = boundingBox[3] - boundingBox[1]
-  result.width = boundingBox[2] - boundingBox[0]
+  result.height = boundingBox[3] - boundingBox[1] + 1
+  result.width = boundingBox[2] - boundingBox[0] + 1
   result.root = parent.root
+
+proc newSubBufferFrom*(relativeBounds: array[4, int], parent: WilllessSubBuffer): WilllessSubBuffer =
+  var bounds = relativeBounds
+  bounds[0] += parent.boundingBox[0]
+  bounds[1] += parent.boundingBox[1]
+  bounds[2] += parent.boundingBox[0]
+  bounds[3] += parent.boundingBox[1]
+  result = newSubBuffer(bounds, parent) 
+  doAssert bounds[2] <= parent.boundingBox[2]
+  doAssert bounds[3] <= parent.boundingBox[3]
 
 proc newRootSubBuffer*(tb: TerminalBuffer): WilllessSubBuffer =
   result = WilllessSubBuffer(root: tb)
@@ -99,6 +109,7 @@ proc fill*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, f: string, ov = OverflowS
     else:
       discard
 
+  
   if ry2 > sb.boundingBox[3]:
     case ov
     of Crash:

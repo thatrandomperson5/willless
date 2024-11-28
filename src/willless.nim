@@ -1,4 +1,4 @@
-import willless/[core], illwill
+import willless/[core, utils], illwill
 
 type ViewComponent* = ref object of WilllessComponent
   child*: InlineComponent
@@ -20,6 +20,9 @@ method addChild*(v: ViewComponent, child: InlineComponent) =
   v.child = child
 
 method render*(v: ViewComponent) =
+  if v.child.initalSizeCalc != Constraint.None:
+    doAssert v.child.restrictedSizeCalc({Width: v.subbuff.width, Height: v.subbuff.height}.newTable)
+
   v.child.subbuff = newSubBuffer([0, 0, v.subbuff.highX, v.subbuff.highY], v.subbuff)
   v.child.render()
 

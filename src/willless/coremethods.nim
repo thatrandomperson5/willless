@@ -1,4 +1,4 @@
-
+import utils
 
 # Base methods
 
@@ -20,7 +20,11 @@ method fill*(c: InlineComponent, x1, y1, x2, y2: int, ch = ' ') {.base.} =
   f.add ch
   c.subbuff.fill(x1, y1, x2, y2, f, c.overflow)
 
-method preSize*(c: InlineComponent) {.base.} = discard
+method initalSizeCalc*(c: InlineComponent): Constraint {.base.} = Constraint.None
+
+method restrictedSizeCalc*(c: InlineComponent, ct: ConstraintTable): bool {.base.} = true
+
+# method addChild*(c: InlineComponent, child: InlineComponent) {.base.} = discard
 
 
 # Space
@@ -39,7 +43,7 @@ proc newEmpty*(): SpaceComponent {.inline.} = newSpace(0, 0)
 
 method render*(s: SpaceComponent) =
   if s.height > 0 and s.width > 0:
-    s.fill(0, 0, s.height-1, s.width-1, s.ch) # fill 
+    s.fill(0, 0, s.width-1, s.height-1, s.ch) # fill 
 
 
 # FlexibleComponent
@@ -56,7 +60,7 @@ proc initExpandingComponent*(f: ExpandingComponent, expansion=ExpansionStyle.XY,
     if f.maxHeight == 0: f.maxHeight = high(int) # infintiy
 
 
-method addChild(f: ExpandingComponent, child: InlineComponent) =
+method addChild*(f: ExpandingComponent, child: InlineComponent) =
   child.parent = f
   f.child = child
 
