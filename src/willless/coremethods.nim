@@ -12,6 +12,7 @@ method makeLayout*(c: WilllessComponent, l: var Layout) {.base.} =
   c.layoutNode = l.node()
   l.setLayoutFlags(c.layoutNode, c.layoutFlags)
   l.setSize(c.layoutNode, vec2(c.width.float, c.height.float))
+  l.setMargin(c.layoutNode, vec4(c.margin[0].float, c.margin[1].float, c.margin[2].float, c.margin[3].float))
 
 method editLayout*(c: WilllessComponent, l: var Layout) {.base.} = discard
 

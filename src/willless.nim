@@ -1,4 +1,4 @@
-import willless/[core, utils]
+import willless/[core, utils, containers, text]
 import illwill, buju
 
 type ViewComponent* = ref object of WilllessComponent
@@ -36,8 +36,8 @@ method editLayout*(v: ViewComponent, l: var Layout) =
 
 method render*(v: ViewComponent, l: var Layout) =
   let comp = l.computed(v.layoutNode)
-  v.child.subbuff = newSubBuffer(computedToBuff(comp), v.subbuff)
-  echo v.child.subbuff[]
+  v.child.subbuff = newSubBufferFrom(comp, v.subbuff)
+  # echo v.child.subbuff[]
   v.child.render(l)
 
 
@@ -58,4 +58,7 @@ method renderRoot*(v: ViewComponent, tb: TerminalBuffer) {.base.} =
   v.render(v.layout) # Step 3.4
 
 
-export core
+export core, containers, text, LayoutBoxWrap, LayoutBoxStart, LayoutBoxEnd,
+    LayoutBoxJustify, LayoutBoxRow, LayoutBoxColumn, LayoutLeft, LayoutTop,
+    LayoutRight, LayoutBottom, LayoutHorizontalFill, LayoutVerticalFill, LayoutFill
+

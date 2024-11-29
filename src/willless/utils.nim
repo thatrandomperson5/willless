@@ -46,5 +46,7 @@ macro super*(t: typed, run: untyped): untyped =
   # echo result.repr
 
 
-template computedToBuff*(v4: Vec4): array[4, int] = 
+template computedToBuff*(v4: Vec4): array[4, int] {.deprecated.} = 
+  ## See `newSubBufferFrom(Vec4, WilllessSubBuffer)`
+  
   [v4[0].int, v4[1].int, v4[0].int + v4[2].int, v4[1].int + v4[3].int]

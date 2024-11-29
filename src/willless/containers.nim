@@ -7,6 +7,7 @@ type
     boxFlags*: int
 
 
+# Generic Container
 
 proc initContainer*(c: Container) = 
   c.boxFlags = LayoutBoxColumn
@@ -34,6 +35,8 @@ method editLayout*(c: Container, l: var Layout) =
 method render*(c: Container, l: var Layout) =
   for child in c.children:
     let comp = l.computed(child.layoutNode)
-    child.subbuff = newSubBufferFrom(computedToBuff(comp), c.subbuff)
-    echo child.subbuff[]
+    child.subbuff = newSubBufferFrom(comp, c.subbuff)
+    # echo child.subbuff[]
     child.render(l)
+
+

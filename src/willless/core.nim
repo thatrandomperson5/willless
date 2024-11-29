@@ -8,6 +8,7 @@ type
     topLevel* = false
     layoutNode*: LayoutNodeID
     layoutFlags*: int
+    margin* = [0, 0, 0, 0]
     width*, height*: int
 
   OverflowStyle* {.pure.} = enum Cut, Override, Crash
@@ -36,13 +37,22 @@ type
     root: TerminalBuffer
 
 
-proc newSubBuffer*(boundingBox: array[4, int], parent: WilllessSubbuffer): WilllessSubbuffer =
+proc newSubBuffer*(boundingBox: array[4, int], parent: WilllessSubBuffer): WilllessSubBuffer =
   result = WilllessSubbuffer(boundingBox: boundingBox, parent: parent)
   result.height = boundingBox[3] - boundingBox[1] + 1
   result.width = boundingBox[2] - boundingBox[0] + 1
   result.root = parent.root
 
-proc newSubBufferFrom*(relativeBounds: array[4, int], parent: WilllessSubBuffer): WilllessSubBuffer =
+
+proc newSubBufferFrom*(v4: Vec4, parent: WilllessSubBuffer): WilllessSubBuffer =
+  result = WilllessSubBuffer(parent: parent)
+  result.width = v4[2].int
+  result.height = v4[3].int
+  result.boundingBox = [v4[0].int, v4[1].int, v4[0].int + result.width - 1, v4[1].int + result.height - 1]
+  result.root = parent.root
+
+proc newSubBufferFrom*(relativeBounds: array[4, int], parent: WilllessSubBuffer): WilllessSubBuffer {.deprecated.} =
+  ## Create a new sub-buffer with bounds relative to the parent. Deprecated due to buju using absolute bounds.
   var bounds = relativeBounds
   bounds[0] += parent.boundingBox[0]
   bounds[1] += parent.boundingBox[1]
@@ -98,7 +108,7 @@ proc write*(sb: WilllessSubBuffer, x, y: int, s: string, ov: OverflowStyle) =
 proc write*(sb: WilllessSubBuffer, s: string, ov = OverflowStyle.Crash) {.inline.} = sb.write(0, 0, s, ov)
 
 
-proc fill*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, f: string, ov = OverflowStyle.Crash) =
+proc adjustCords(sb: WilllessSubBuffer, x1, y1, x2, y2: int, ov = OverflowStyle.Crash): array[4, int] =
   let rx1 = sb.boundingBox[0] + x1 
   let ry1 = sb.boundingBox[1] + y1
   var rx2 = sb.boundingBox[0] + x2
@@ -108,7 +118,7 @@ proc fill*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, f: string, ov = OverflowS
   if rx2 > sb.boundingBox[2]:
     case ov
     of Crash:
-      raise ValueError.newException("Fill exceeded buffer on the x axis.")
+      raise ValueError.newException("Modification exceeded buffer on the x axis.")
     of Cut:
       rx2 = sb.boundingBox[2]
     else:
@@ -118,13 +128,21 @@ proc fill*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, f: string, ov = OverflowS
   if ry2 > sb.boundingBox[3]:
     case ov
     of Crash:
-      raise ValueError.newException("Fill exceeded buffer on the y axis.")
+      raise ValueError.newException("Modification exceeded buffer on the y axis.")
     of Cut:
       ry2 = sb.boundingBox[3]
     else:
        discard
 
-  sb.root.fill(rx1, ry1, rx2, ry2, f)
+  result = [rx1, ry1, rx2, ry2]
+
+proc fill*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, f: string, ov = OverflowStyle.Crash) =
+  let c = sb.adjustCords(x1, y1, x2, y2, ov)
+  sb.root.fill(c[0], c[1], c[2], c[3], f)
+
+proc drawRect*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, doubleStyle: bool, ov = OverflowStyle.Crash) =
+  let c = sb.adjustCords(x1, y1, x2, y2, ov)
+  sb.root.drawRect(c[0], c[1], c[2], c[3], doubleStyle)
 
 
 include coremethods
