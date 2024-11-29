@@ -13,5 +13,6 @@ wl.addChild() do:
   c.addChild(newText("What's up?"))
   c
 
-wl.render()
+wl.renderLayout()
+wl.renderRoot(tb)
 tb.display()

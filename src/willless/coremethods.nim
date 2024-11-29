@@ -2,14 +2,22 @@
 
 # Base methods
 
-method render*(c: WilllessComponent) {.base.} = discard
+method render*(c: WilllessComponent, l: var Layout) {.base.} = discard
 
 method addChild*(c: WilllessComponent, child: WilllessComponent) {.base.} =
   raise ValueError.newException("Component doesn't have children.")
 
+
+method makeLayout*(c: WilllessComponent, l: var Layout) {.base.} = 
+  c.layoutNode = l.node()
+  l.setLayoutFlags(c.layoutNode, c.layoutFlags)
+  l.setSize(c.layoutNode, vec2(c.width.float, c.height.float))
+
+method editLayout*(c: WilllessComponent, l: var Layout) {.base.} = discard
+
 # Inline
 
-method render*(c: InlineComponent) = discard
+method render*(c: InlineComponent, l: var Layout) = discard
   
 method write*(c: InlineComponent, x, y: int, s: string) {.base.} = c.subbuff.write(x, y, s, c.overflow)
 
@@ -19,6 +27,7 @@ method fill*(c: InlineComponent, x1, y1, x2, y2: int, ch = ' ') {.base.} =
   var f: string
   f.add ch
   c.subbuff.fill(x1, y1, x2, y2, f, c.overflow)
+
 
 
 # method addChild*(c: InlineComponent, child: InlineComponent) {.base.} = discard
@@ -38,12 +47,13 @@ proc newSpace*(width, height: int, fill = ' '): SpaceComponent =
 proc newEmpty*(): SpaceComponent {.inline.} = newSpace(0, 0)
 
 
-method render*(s: SpaceComponent) =
+method render*(s: SpaceComponent, l: var Layout) =
   if s.height > 0 and s.width > 0:
     s.fill(0, 0, s.width-1, s.height-1, s.ch) # fill 
 
 
 # FlexibleComponent
+#[ Deprecated
 
 proc initExpandingComponent*(f: ExpandingComponent, expansion=ExpansionStyle.XY,
   minWidth, minHeight, maxWidth, maxHeight = 0) =
@@ -68,3 +78,4 @@ method render*(f: ExpandingComponent) =
   f.child.subbuff = f.subbuff # This type is only a denotation of a more advanced sizing protocol
   f.child.render()
   
+]#

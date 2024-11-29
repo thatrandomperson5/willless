@@ -1,4 +1,5 @@
 import std/[macros]
+import vmath
 
 
 proc hardWrap*(s: string, length: int): string =
@@ -26,12 +27,24 @@ proc findKind(n: NimNode, k: NimNodeKind): (NimNode, bool) =
 
 
 
-macro super*(t: typed): untyped =
+macro super*(t: typed, run: untyped): untyped =
   t.expectKind(nnkSym)
   var impl = getTypeImpl(t)
   if impl.kind == nnkRefTy:
     impl = getTypeImpl(impl[0])
   let parent = findKind(impl, nnkOfInherit)[0][0]
+
+  run.expectKind({nnkCall, nnkStmtList})
+  var runProc = run
+  if runProc.kind != nnkCall:
+    runProc = run[0]
+    runProc.expectKind(nnkCall)
+
+  runProc.insert(1, newCall(parent, t))
   
-  result = newCall(parent, t)
+  result = newTree(nnkCommand, newIdentNode("procCall"), runProc)
   # echo result.repr
+
+
+template computedToBuff*(v4: Vec4): array[4, int] = 
+  [v4[0].int, v4[1].int, v4[0].int + v4[2].int, v4[1].int + v4[3].int]

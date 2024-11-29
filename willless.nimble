@@ -11,3 +11,4 @@ srcDir        = "src"
 
 requires "nim ^= 2.0.4"
 requires "illwill ^= 0.4.1"
+requires "buju ^= 0.2.1"

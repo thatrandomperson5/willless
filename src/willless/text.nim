@@ -1,55 +1,51 @@
 import core, utils
 import std/[wordwrap, strutils]
+import buju
 
 type 
   TextComponent* = ref object of InlineComponent
     text*: string
     wrap* = WrapStyle.Hard
-    lineCache: seq[string] # Internal line cache for efficency
+    lineCache: seq[string] # A cache of lines 
     
 
 proc initTextComponent*(t: TextComponent, text: string, wrap = WrapStyle.Hard) =
   t.text = text
   t.wrap = wrap
+  t.layoutFlags = LayoutHorizontalFill
 
 proc newText*(text: string, wrap = WrapStyle.Hard): TextComponent =
   new(result)
   result.initTextComponent(text, wrap)
 
 
-proc textRender(t: TextComponent) =
+proc textRender(t: TextComponent, width: int): seq[string] =
 
   var wrapped = t.text
   case t.wrap
   of Hard:
-    wrapped = hardWrap(wrapped, t.width)
+    wrapped = hardWrap(wrapped, width)
   of Soft:
-    wrapped = wrapWords(wrapped, t.width)
+    wrapped = wrapWords(wrapped, width)
   else:
     discard
 
-  t.lineCache = wrapped.splitLines()
+  result = wrapped.splitLines()
 
-method render*(t: TextComponent) =
-  if t.lineCache.len == 0:
-    t.width = t.subbuff.width
-    textRender(t)
+method render*(t: TextComponent, l: var Layout) =
   for i, line in t.lineCache:
     t.write(0, i, line)
-  
+
   t.lineCache.setLen(0)
+  
+method editLayout*(t: TextComponent, l: var Layout) =
+  let precomp = l.computed(t.layoutNode)
+  if t.layoutFlags == LayoutHorizontalFill:
+    # Wrap to parent width
+    t.lineCache = t.textRender(precomp[3].int)
+    t.height = t.lineCache.len
 
+  elif t.layoutFlags == LayoutVerticalFill:
+    discard # Not yet implemented vertical constraint wrap
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+  l.setSize(t.layoutNode, vec2(t.width.float, t.height.float))

@@ -1,10 +1,14 @@
 import illwill
 import std/strutils
+import buju
 
 type 
   WilllessComponent* = ref object of RootObj
     parent*: WilllessComponent
     topLevel* = false
+    layoutNode*: LayoutNodeID
+    layoutFlags*: int
+    width*, height*: int
 
   OverflowStyle* {.pure.} = enum Cut, Override, Crash
   WrapStyle* {.pure.} = enum Soft, Hard, None
@@ -12,16 +16,17 @@ type
   InlineComponent* = ref object of WilllessComponent
     subbuff*: WilllessSubBuffer
     overflow* = OverflowStyle.Crash
-    width*, height*: int
 
   SpaceComponent* = ref object of InlineComponent
     ch* = ' '
 
+  #[ Deprecated with the new use of buju
   ExpansionStyle* {.pure.} = enum X, Y, XY, None
   ExpandingComponent* = ref object of InlineComponent
     minHeight*, minWidth*, maxWidth*, maxHeight*: int
     expansion* = ExpansionStyle.XY
     child*: InlineComponent
+  ]#
 
   WilllessSubBuffer* = ref object
     boundingBox*: array[4, int] ## Top left (x, y)  & (x, y) bottom right
