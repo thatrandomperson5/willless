@@ -42,7 +42,8 @@ method editLayout*(t: TextComponent, l: var Layout) =
   let precomp = l.computed(t.layoutNode)
   if t.layoutFlags == LayoutHorizontalFill:
     # Wrap to parent width
-    t.lineCache = t.textRender(precomp[3].int)
+    let bounds = getSubBufferBounds(precomp) # Calculate
+    t.lineCache = t.textRender(bounds.width) 
     t.height = t.lineCache.len
 
   elif t.layoutFlags == LayoutVerticalFill:

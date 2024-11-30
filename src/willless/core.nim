@@ -49,12 +49,10 @@ proc newSubBuffer*(boundingBox: array[4, int], parent: WilllessSubBuffer): Willl
 proc newSubBufferFrom*(v4: Vec4, parent: WilllessSubBuffer): WilllessSubBuffer =
   result = WilllessSubBuffer(parent: parent)
 
-  result.boundingBox = [v4[0].roundInt(true), v4[1].roundInt(true), 0, 0]
-  result.boundingBox[2] = roundInt(v4[0] + v4[2]) - 1 # rightmost
-  result.boundingBox[3] = roundInt(v4[1] + v4[3]) - 1 # bottommost
-
-  result.width = (result.boundingBox[2] - result.boundingBox[0]) + 1
-  result.height = (result.boundingBox[3] - result.boundingBox[1]) + 1
+  let bounds = getSubBufferBounds(v4)
+  result.boundingBox = bounds.boundingBox
+  result.width = bounds.width
+  result.height = bounds.height
 
   result.root = parent.root
 
@@ -121,7 +119,7 @@ proc adjustCords(sb: WilllessSubBuffer, x1, y1, x2, y2: int, ov = OverflowStyle.
   var rx2 = sb.boundingBox[0] + x2
   var ry2 = sb.boundingBox[1] + y2
 
-  doAssert rx1 < rx2 and ry1 < ry2
+  doAssert rx1 <= rx2 and ry1 <= ry2, "rx1: " & $rx1 & " rx2: " & $rx2 & " ry1: " & $ry1 & " ry2: " & $ry2 # Cords are inclusive
   if rx2 > sb.boundingBox[2]:
     case ov
     of Crash:

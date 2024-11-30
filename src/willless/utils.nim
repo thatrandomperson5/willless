@@ -5,12 +5,14 @@ import vmath
 proc hardWrap*(s: string, length: int): string =
   var i = 0
   for c in s:
+
     result.add c # Add char
-    if c == '\n': i = 0 # If newline reset
-    i += 1 
+    if c == '\n': i = -1 # If newline reset 
     if i == length:
+      i = -1 # Account for the added 1
       result.add '\n'
-      i = 0
+
+    i += 1
 
 
 proc findKind(n: NimNode, k: NimNodeKind): (NimNode, bool) =
@@ -61,3 +63,14 @@ proc roundInt*(f: SomeFloat, weightedDown: static bool = false): int {.inline.} 
     return int(floor(f))
   else:
     return int(round(f))
+
+proc getSubBufferBounds*(v4: Vec4): tuple[width, height: int, boundingBox: array[4, int]] =
+  var boundingBox = [v4[0].roundInt(true), v4[1].roundInt(true), 0, 0]
+  boundingBox[2] = roundInt(v4[0] + v4[2]) - 1 # rightmost
+  boundingBox[3] = roundInt(v4[1] + v4[3]) - 1 # bottommost
+
+  var width = (boundingBox[2] - boundingBox[0]) + 1
+  var height = (boundingBox[3] - boundingBox[1]) + 1
+
+  result = (width, height, boundingBox)
+  

@@ -31,14 +31,14 @@ method makeLayout*(v: ViewComponent, l: var Layout) =
   l.insertChild(v.layoutNode, v.child.layoutNode)
   
 method editLayout*(v: ViewComponent, l: var Layout) =
-  l.setSize(v.layoutNode, vec2(v.subbuff.width.float, v.subbuff.height.float))
   editLayout(v.child, l)
 
 method render*(v: ViewComponent, l: var Layout) =
   let comp = l.computed(v.layoutNode)
   v.child.subbuff = newSubBufferFrom(comp, v.subbuff)
   # echo v.child.subbuff[]
-  v.child.render(l)
+  if v.child.usesSpace():
+    v.child.render(l)
 
 
 
@@ -52,6 +52,7 @@ method renderRoot*(v: ViewComponent, tb: TerminalBuffer) {.base.} =
   if not v.layoutComputed:
     raise ValueError.newException("No layout has been rendered for this view.")
 
+  v.layout.setSize(v.layoutNode, vec2(v.subbuff.width.float, v.subbuff.height.float)) # Size must be changed before pre-computation
   v.layout.compute(v.layoutNode) # Step 3.1
   v.editLayout(v.layout) # Step 3.2
   v.layout.compute(v.layoutNode) # Step 3.3

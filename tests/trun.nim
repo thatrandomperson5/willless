@@ -14,8 +14,6 @@ proc countTo(i: int): string =
     for i, c in sn:
       lines[i].add spaces(n - lines[i].len)
       lines[i].add c
-      
-      
   result = lines.join("\n")
   
 

@@ -37,6 +37,7 @@ method render*(c: Container, l: var Layout) =
     let comp = l.computed(child.layoutNode)
     child.subbuff = newSubBufferFrom(comp, c.subbuff)
     # echo child.id, ": ", child.subbuff[]
-    child.render(l)
+    if child.usesSpace:
+      child.render(l)
 
 

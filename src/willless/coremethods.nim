@@ -18,6 +18,8 @@ method editLayout*(c: WilllessComponent, l: var Layout) {.base.} = discard
 
 # Inline
 
+proc usesSpace*(c: InlineComponent): bool {.inline.} = c.subbuff.width > 0 and c.subbuff.height > 0
+
 method render*(c: InlineComponent, l: var Layout) = discard
   
 method write*(c: InlineComponent, x, y: int, s: string) {.base.} = c.subbuff.write(x, y, s, c.overflow)
