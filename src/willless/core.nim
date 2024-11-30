@@ -1,6 +1,7 @@
 import illwill
 import std/strutils
 import buju
+import utils
 
 type 
   WilllessComponent* = ref object of RootObj
@@ -10,6 +11,7 @@ type
     layoutFlags*: int
     margin* = [0, 0, 0, 0]
     width*, height*: int
+    id*: string
 
   OverflowStyle* {.pure.} = enum Cut, Override, Crash
   WrapStyle* {.pure.} = enum Soft, Hard, None
@@ -46,9 +48,14 @@ proc newSubBuffer*(boundingBox: array[4, int], parent: WilllessSubBuffer): Willl
 
 proc newSubBufferFrom*(v4: Vec4, parent: WilllessSubBuffer): WilllessSubBuffer =
   result = WilllessSubBuffer(parent: parent)
-  result.width = v4[2].int
-  result.height = v4[3].int
-  result.boundingBox = [v4[0].int, v4[1].int, v4[0].int + result.width - 1, v4[1].int + result.height - 1]
+
+  result.boundingBox = [v4[0].roundInt(true), v4[1].roundInt(true), 0, 0]
+  result.boundingBox[2] = roundInt(v4[0] + v4[2]) - 1 # rightmost
+  result.boundingBox[3] = roundInt(v4[1] + v4[3]) - 1 # bottommost
+
+  result.width = (result.boundingBox[2] - result.boundingBox[0]) + 1
+  result.height = (result.boundingBox[3] - result.boundingBox[1]) + 1
+
   result.root = parent.root
 
 proc newSubBufferFrom*(relativeBounds: array[4, int], parent: WilllessSubBuffer): WilllessSubBuffer {.deprecated.} =

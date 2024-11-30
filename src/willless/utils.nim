@@ -50,3 +50,14 @@ template computedToBuff*(v4: Vec4): array[4, int] {.deprecated.} =
   ## See `newSubBufferFrom(Vec4, WilllessSubBuffer)`
   
   [v4[0].int, v4[1].int, v4[0].int + v4[2].int, v4[1].int + v4[3].int]
+
+
+import std/math
+
+proc roundInt*(f: SomeFloat, weightedDown: static bool = false): int {.inline.} =
+  when weightedDown:
+    if f > (floor(f) + 0.5):
+      return int(ceil(f))
+    return int(floor(f))
+  else:
+    return int(round(f))
