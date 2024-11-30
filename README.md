@@ -8,6 +8,7 @@ A high level TUI library built on-top of nim’s [illwill](https://github.com/jo
 * [X] Simple Bordered Boxes
 * [ ] Linked Bordered Boxes
 * [ ] Better style system
+* [ ] Custom Double Buffering
 * [ ] Documentation
 * [ ] Mouse and Key bindings
 * [ ] DSL macro

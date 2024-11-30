@@ -1,5 +1,7 @@
 import core, utils
 import buju
+when defined(willlessDebug):
+  import debugTools
 
 type 
   Container* = ref object of InlineComponent
@@ -30,13 +32,18 @@ method makeLayout*(c: Container, l: var Layout) =
 
 method editLayout*(c: Container, l: var Layout) =
   for child in c.children:
+    when defined(willlessDebug) and defined(willlessDebugLayoutEdits):
+      debug child.id, "^: ", l.computed(child.layoutNode)
     editLayout(child, l)
 
 method render*(c: Container, l: var Layout) =
   for child in c.children:
     let comp = l.computed(child.layoutNode)
     child.subbuff = newSubBufferFrom(comp, c.subbuff)
-    # echo child.id, ": ", child.subbuff[]
+    
+    when defined(willlessDebug) and defined(willlessDebugBuffers):
+      debug child.id, ": ", child.subbuff[]
+
     if child.usesSpace:
       child.render(l)
 

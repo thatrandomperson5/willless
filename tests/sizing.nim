@@ -3,7 +3,7 @@
 import os, illwill, willless
 import willless/components/borders
 
-illwillInit(fullscreen=true)
+illwillInit(fullscreen=false)
 hideCursor()
 
 proc exitProc() {.noconv.} =
@@ -18,6 +18,7 @@ const ipsumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed 
 
 
 var tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+setDoubleBuffering(false)
 var root = newView(tb)
 root.addChild() do:
   var main = newBorderBox(true)
@@ -31,6 +32,7 @@ root.addChild() do:
   main
 
 root.renderLayout()
+
 
 while true:
   tb = newTerminalBuffer(terminalWidth(), terminalHeight()) # Adjust height

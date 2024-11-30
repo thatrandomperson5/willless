@@ -4,15 +4,15 @@ import vmath
 
 proc hardWrap*(s: string, length: int): string =
   var i = 0
-  for c in s:
-
-    result.add c # Add char
+  for idx, c in s:
     if c == '\n': i = -1 # If newline reset 
-    if i == length:
-      i = -1 # Account for the added 1
-      result.add '\n'
-
+    else: result.add c
+   
     i += 1
+    if idx != s.high and i == length: # If index not at end and time to wrap
+      result.add '\n'
+      i = 0
+
 
 
 proc findKind(n: NimNode, k: NimNodeKind): (NimNode, bool) =

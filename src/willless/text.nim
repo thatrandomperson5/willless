@@ -6,7 +6,7 @@ type
   TextComponent* = ref object of InlineComponent
     text*: string
     wrap* = WrapStyle.Hard
-    lineCache: seq[string] # A cache of lines 
+    cache: string # A cached version of the wrapped string
     
 
 proc initTextComponent*(t: TextComponent, text: string, wrap = WrapStyle.Hard) =
@@ -19,32 +19,30 @@ proc newText*(text: string, wrap = WrapStyle.Hard): TextComponent =
   result.initTextComponent(text, wrap)
 
 
-proc textRender(t: TextComponent, width: int): seq[string] =
+proc textRender(t: TextComponent, width: int): string =
 
-  var wrapped = t.text
+  result = t.text
   case t.wrap
   of Hard:
-    wrapped = hardWrap(wrapped, width)
+    result = hardWrap(result, width)
   of Soft:
-    wrapped = wrapWords(wrapped, width)
+    result = wrapWords(result, width)
   else:
     discard
 
-  result = wrapped.splitLines()
 
 method render*(t: TextComponent, l: var Layout) =
-  for i, line in t.lineCache:
-    t.write(0, i, line)
+  t.subbuff.write(t.cache)
 
-  t.lineCache.setLen(0)
+  t.cache = ""
   
 method editLayout*(t: TextComponent, l: var Layout) =
   let precomp = l.computed(t.layoutNode)
   if t.layoutFlags == LayoutHorizontalFill:
     # Wrap to parent width
     let bounds = getSubBufferBounds(precomp) # Calculate
-    t.lineCache = t.textRender(bounds.width) 
-    t.height = t.lineCache.len
+    t.cache = t.textRender(bounds.width) 
+    t.height = t.cache.count("\n") + 1 # + 1 for the first line
 
   elif t.layoutFlags == LayoutVerticalFill:
     discard # Not yet implemented vertical constraint wrap

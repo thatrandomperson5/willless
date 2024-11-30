@@ -9,3 +9,4 @@ htmldocs/
 *.bin
 **/*.log
 *.exe
+*.log

@@ -4,6 +4,7 @@ import std/strutils
 
 illwillInit(fullscreen=false)
 hideCursor()
+setDoubleBuffering(false)
 
 proc countTo(i: int): string = 
   var lines: seq[string]

@@ -1,5 +1,7 @@
 import willless/[core, utils, containers, text]
 import illwill, buju
+when defined(willlessDebug):
+  import willless/debugTools
 
 type ViewComponent* = ref object of WilllessComponent
   child*: InlineComponent
@@ -9,6 +11,8 @@ type ViewComponent* = ref object of WilllessComponent
   layoutComputed = false
 
 proc initViewComponent*(v: ViewComponent, tb: TerminalBuffer) = 
+  if hasDoubleBuffering():
+    raise ValueError.newException("Illwill is currently using default double buffer, which is incompatible with willless changing sizes.")
   v.topLevel = true
   v.subbuff = newRootSubBuffer(tb)
   v.layoutNode = v.layout.node()
@@ -31,12 +35,18 @@ method makeLayout*(v: ViewComponent, l: var Layout) =
   l.insertChild(v.layoutNode, v.child.layoutNode)
   
 method editLayout*(v: ViewComponent, l: var Layout) =
+  when defined(willlessDebug) and defined(willlessDebugLayoutEdits):
+    debug "Internal Root^: ", l.computed(v.layoutNode)
+    debug v.child.id, "^: ", l.computed(v.child.layoutNode)
   editLayout(v.child, l)
 
 method render*(v: ViewComponent, l: var Layout) =
   let comp = l.computed(v.layoutNode)
   v.child.subbuff = newSubBufferFrom(comp, v.subbuff)
-  # echo v.child.subbuff[]
+
+  when defined(willlessDebug) and defined(willlessDebugBuffers):
+    debug v.child.id, ": ", v.child.subbuff[]
+
   if v.child.usesSpace():
     v.child.render(l)
 
