@@ -36,7 +36,10 @@ wl.addChild() do:
   c.addChild() do:
     var sub = newBorderBox()
     sub.id = "border3"
-    sub.addChild(newText("Lower Box\nLower Box"))
+    # var style = sub.style() # Broken https://forum.nim-lang.org/t/12611
+    # style.containerDirection = ContainerRow
+    sub.addChild(newText("Lower Box\n\nLower Box"))
+    sub.addChild(newText("Another Box I guess"))
     sub
   c
 

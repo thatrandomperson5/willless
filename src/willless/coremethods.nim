@@ -31,6 +31,8 @@ method fill*(c: InlineComponent, x1, y1, x2, y2: int, ch = ' ') {.base.} =
   f.add ch
   c.subbuff.fill(x1, y1, x2, y2, f, c.overflow)
 
+method drawRect*(c: InlineComponent, x1, y1, x2, y2: int, doubleStyle = false) {.base.} = c.subbuff.drawRect(x1, y1, x2, y2, doubleStyle)
+
 
 
 # method addChild*(c: InlineComponent, child: InlineComponent) {.base.} = discard

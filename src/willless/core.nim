@@ -37,6 +37,7 @@ type
     width*: int
     parent: WilllessSubbuffer
     root: TerminalBuffer
+    boxRoot: BoxBuffer
 
 
 proc newSubBuffer*(boundingBox: array[4, int], parent: WilllessSubBuffer): WilllessSubBuffer =
@@ -44,6 +45,7 @@ proc newSubBuffer*(boundingBox: array[4, int], parent: WilllessSubBuffer): Willl
   result.height = boundingBox[3] - boundingBox[1] + 1
   result.width = boundingBox[2] - boundingBox[0] + 1
   result.root = parent.root
+  result.boxRoot = parent.boxRoot
 
 
 proc newSubBufferFrom*(v4: Vec4, parent: WilllessSubBuffer): WilllessSubBuffer =
@@ -55,6 +57,7 @@ proc newSubBufferFrom*(v4: Vec4, parent: WilllessSubBuffer): WilllessSubBuffer =
   result.height = bounds.height
 
   result.root = parent.root
+  result.boxRoot = parent.boxRoot
 
 proc newSubBufferFrom*(relativeBounds: array[4, int], parent: WilllessSubBuffer): WilllessSubBuffer {.deprecated.} =
   ## Create a new sub-buffer with bounds relative to the parent. Deprecated due to buju using absolute bounds.
@@ -69,6 +72,7 @@ proc newSubBufferFrom*(relativeBounds: array[4, int], parent: WilllessSubBuffer)
 
 proc newRootSubBuffer*(tb: TerminalBuffer): WilllessSubBuffer =
   result = WilllessSubBuffer(root: tb)
+  result.boxRoot = newBoxBuffer(tb.width, tb.height)
   result.height = tb.height
   result.width = tb.width
   result.boundingBox = [0, 0, result.height-1, result.width-1]
@@ -77,6 +81,11 @@ proc newRootSubBuffer*(tb: TerminalBuffer): WilllessSubBuffer =
 proc highY*(sb: WilllessSubBuffer): int {.inline.} = sb.height - 1
 proc highX*(sb: WilllessSubBuffer): int {.inline.} = sb.width - 1
 
+
+proc writeBoxRoot*(sb: WilllessSubBuffer) {.inline.} = sb.root.write(sb.boxRoot)
+
+
+# Wrappers of default illwill write procs
 
 proc write*(sb: WilllessSubBuffer, x, y: int, s: string, ov: OverflowStyle) =
   let realX = sb.boundingBox[0] + x
@@ -145,9 +154,12 @@ proc fill*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, f: string, ov = OverflowS
   let c = sb.adjustCords(x1, y1, x2, y2, ov)
   sb.root.fill(c[0], c[1], c[2], c[3], f)
 
-proc drawRect*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, doubleStyle: bool, ov = OverflowStyle.Crash) =
+proc drawRect*(sb: WilllessSubBuffer, x1, y1, x2, y2: int, doubleStyle: bool, useBox = false, ov = OverflowStyle.Crash) =
   let c = sb.adjustCords(x1, y1, x2, y2, ov)
-  sb.root.drawRect(c[0], c[1], c[2], c[3], doubleStyle)
+  if useBox:
+    sb.boxRoot.drawRect(c[0], c[1], c[2], c[3], doubleStyle)
+  else:
+    sb.root.drawRect(c[0], c[1], c[2], c[3], doubleStyle)
 
 
 include coremethods

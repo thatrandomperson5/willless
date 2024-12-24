@@ -5,11 +5,12 @@ import vmath
 proc hardWrap*(s: string, length: int): string =
   var i = 0
   for idx, c in s:
-    if c == '\n': i = -1 # If newline reset 
-    else: result.add c
+    result.add c
+    if c == '\n': 
+      i = -1 # If newline reset 
    
     i += 1
-    if idx != s.high and i == length: # If index not at end and time to wrap
+    if (idx != s.high) and (i == length) and (s[idx+1] != '\n'): # If index not at end and line length and not already newline present
       result.add '\n'
       i = 0
 

@@ -1,4 +1,4 @@
-import willless/[core, utils, containers, text]
+import willless/[core, utils, containers, text, styles]
 import illwill, buju
 when defined(willlessDebug):
   import willless/debugTools
@@ -50,6 +50,8 @@ method render*(v: ViewComponent, l: var Layout) =
   if v.child.usesSpace():
     v.child.render(l)
 
+  v.subbuff.writeBoxRoot()
+
 
 
 method renderLayout*(v: ViewComponent) {.base.} = v.makeLayout(v.layout)
@@ -69,7 +71,8 @@ method renderRoot*(v: ViewComponent, tb: TerminalBuffer) {.base.} =
   v.render(v.layout) # Step 3.4
 
 
-export core, containers, text, LayoutBoxWrap, LayoutBoxStart, LayoutBoxEnd,
-    LayoutBoxJustify, LayoutBoxRow, LayoutBoxColumn, LayoutLeft, LayoutTop,
-    LayoutRight, LayoutBottom, LayoutHorizontalFill, LayoutVerticalFill, LayoutFill
+export core, containers, text, styles
+#    LayoutBoxWrap, LayoutBoxStart, LayoutBoxEnd,
+#    LayoutBoxJustify, LayoutBoxRow, LayoutBoxColumn, LayoutLeft, LayoutTop,
+#    LayoutRight, LayoutBottom, LayoutHorizontalFill, LayoutVerticalFill, LayoutFill
 

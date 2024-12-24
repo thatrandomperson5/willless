@@ -1,4 +1,4 @@
-import core, utils
+import core, utils, styles
 import buju
 when defined(willlessDebug):
   import debugTools
@@ -48,3 +48,35 @@ method render*(c: Container, l: var Layout) =
       child.render(l)
 
 
+# Styles
+import std/sequtils
+
+type 
+  ContainerDirection* = enum 
+    ContainerFree = 0x00
+    ContainerRow = LayoutBoxRow
+    ContainerColumn = LayoutBoxColumn
+  ContainerEffects* = enum
+    ContainerEffectNone = 0x00
+    ContainerWrap = LayoutBoxWrap
+    ContainerAlignStart = LayoutBoxStart
+    ContainerAlignEnd = LayoutBoxEnd
+    ContainerJustify = LayoutBoxJustify
+
+
+converter toSeq*[T: ContainerEffects | ContainerDirection](ce: T): seq[T] = @[ce]
+
+proc `containerEffects=`*[T: Container](wand: StyleWand[T], val: seq[ContainerEffects]) {.inline.} =
+  wand.target.boxFlags = wand.target.boxFlags or orsum(map(val, ord))
+
+proc `containerDirection=`*[T: Container](wand: StyleWand[T], val: ContainerDirection) {.inline.} =
+  wand.target.boxFlags = wand.target.boxFlags or ord(val)
+
+proc containerEnableWrap*[T: Container](wand: StyleWand[T]) {.inline.} = 
+  wand.target.boxFlags = wand.target.boxFlags or ord(ContainerWrap)
+
+proc containerEnableJustify*[T: Container](wand: StyleWand[T]) {.inline.} = 
+  wand.target.boxFlags = wand.target.boxFlags or ord(ContainerJustify)
+
+proc `containerFlags=`*[T: Container](wand: StyleWand[T], val: seq[ContainerEffects | ContainerDirection]) {.inline.} =
+  wand.target.boxFlags = orsum(map(val, ord))

@@ -32,7 +32,7 @@ proc textRender(t: TextComponent, width: int): string =
 
 
 method render*(t: TextComponent, l: var Layout) =
-  t.subbuff.write(t.cache)
+  t.write(t.cache)
 
   t.cache = ""
   

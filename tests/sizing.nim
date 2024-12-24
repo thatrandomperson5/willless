@@ -5,6 +5,7 @@ import willless/components/borders
 
 illwillInit(fullscreen=false)
 hideCursor()
+setDoubleBuffering(false)
 
 proc exitProc() {.noconv.} =
   illwillDeinit()
@@ -18,17 +19,19 @@ const ipsumText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed 
 
 
 var tb = newTerminalBuffer(terminalWidth(), terminalHeight())
-setDoubleBuffering(false)
 var root = newView(tb)
 root.addChild() do:
   var main = newBorderBox(true)
   main.addChild() do:
     var ipsum = newBorderBox()
     ipsum.addChild(newText(ipsumText))
-    ipsum.margin = [1, 1, 1, 1]
+    ipsum.style.margin = 1
     ipsum
 
-  main.addChild(newText("Hello World!"))
+  main.addChild() do:
+    var boxGroup = newBorderBoxGroup()
+    boxGroup.addChild("Hello World!")
+    boxGroup.addChild("Hello World!")
   main
 
 root.renderLayout()
